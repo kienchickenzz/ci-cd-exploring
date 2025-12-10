@@ -1,4 +1,4 @@
-name: Explore Server Directory
+name: Restart Server Container
 
 on:
     workflow_dispatch: # Trigger manually
@@ -8,21 +8,17 @@ on:
                 required: false
                 default: 'mm-quant-trading-engine'
                 type: string
+            container_name:
+                description: 'Container name to restart'
+                required: false
+                default: 'mm-quant-trading-engine-app-1'
 
 jobs:
-    ssh-and-list-files:
+    restart-container:
         runs-on: ubuntu-latest
         environment: trading_server
-      
         steps:
-        - name: Check secrets exist
-          run: |
-              echo "SSH_HOST exists: ${{ secrets.SSH_HOST != '' }}"
-              echo "SSH_USERNAME exists: ${{ secrets.SSH_USERNAME != '' }}"
-              echo "SSH_PRIVATE_KEY exists: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
-              echo "SSH_PORT exists: ${{ secrets.SSH_PORT != '' }}"
-
-        - name: Explore server directory
+        - name: SSH into server and list files
           uses: appleboy/ssh-action@v0.1.5
           with:
               host: ${{ secrets.SSH_HOST }}
@@ -31,5 +27,5 @@ jobs:
               port: ${{ secrets.SSH_PORT }}
               script: |
                   cd "${{ github.event.inputs.directory }}"
-                  ls -la
-                  pwd
+                  docker restart "${{ github.event.inputs.container_name }}"
+                  docker ps --filter "name=${{ github.event.inputs.container_name }}"

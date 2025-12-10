@@ -6,6 +6,7 @@ on:
 jobs:
     ssh-and-list-files:
         runs-on: ubuntu-latest
+        environment: trading_server
       
         steps:
         - name: Checkout code
@@ -13,18 +14,18 @@ jobs:
 
         - name: Debug - Check secrets exist
           run: |
-              echo "SSH_HOST exists: ${{ secrets.trading_server.SSH_HOST != '' }}"
-              echo "SSH_USERNAME exists: ${{ secrets.trading_server.SSH_USERNAME != '' }}"
-              echo "SSH_PRIVATE_KEY exists: ${{ secrets.trading_server.SSH_PRIVATE_KEY != '' }}"
-              echo "SSH_PORT exists: ${{ secrets.trading_server.SSH_PORT != '' }}"
+              echo "SSH_HOST exists: ${{ secrets.SSH_HOST != '' }}"
+              echo "SSH_USERNAME exists: ${{ secrets.SSH_USERNAME != '' }}"
+              echo "SSH_PRIVATE_KEY exists: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
+              echo "SSH_PORT exists: ${{ secrets.SSH_PORT != '' }}"
 
         - name: SSH into server and list files
           uses: appleboy/ssh-action@v0.1.5
           with:
-              host: ${{ secrets.trading_server.SSH_HOST }}
-              username: ${{ secrets.trading_server.SSH_USERNAME }}
-              key: ${{ secrets.trading_server.SSH_PRIVATE_KEY }}
-              port: ${{ secrets.trading_server.SSH_PORT }}
+              host: ${{ secrets.SSH_HOST }}
+              username: ${{ secrets.SSH_USERNAME }}
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              port: ${{ secrets.SSH_PORT }}
               script: |
                   cd mm-quant-trading-engine
                   ls -la

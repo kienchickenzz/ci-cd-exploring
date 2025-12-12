@@ -39,4 +39,23 @@ jobs:
                   # Rebuild container
                   docker compose up -d --build --no-deps "$IMAGE"
 
-# TODO: Add health check or wait mechanism if needed (peharps in another step)
+    check-container:
+        runs-on: ubuntu-latest
+        environment: trading_server
+        needs: rebuild-container
+        steps:
+        - name: Check container status
+          uses: appleboy/ssh-action@v0.1.5
+          with:
+              host: ${{ secrets.SSH_HOST }}
+              username: ${{ secrets.SSH_USERNAME }}
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              port: ${{ secrets.SSH_PORT }}
+              script: |
+                  # Variables
+                  PROJECT_DIR="${{ github.event.inputs.directory }}"
+                  CONTAINER="${{ github.event.inputs.container_name }}"
+
+                  cd "$PROJECT_DIR"
+
+                  docker ps --filter "name=$CONTAINER"

@@ -10,7 +10,7 @@ on:
                 type: string
 
 jobs:
-    ssh-and-list-files:
+    list-files:
         runs-on: ubuntu-latest
         environment: trading_server
       
